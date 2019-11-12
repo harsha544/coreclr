@@ -26,7 +26,7 @@ export PYTHON
 usage()
 {
     echo "Usage: $0 [BuildArch] [BuildType] [-verbose] [-coverage] [-cross] [-gccx.y] [-clangx.y] [-ninja] [-configureonly] [-skipconfigure] [-skipnative] [-skipcrossarchnative] [-skipmanaged] [-skipmscorlib] [-skiptests] [-stripsymbols] [-ignorewarnings] [-cmakeargs] [-bindir]"
-    echo "BuildArch can be: -x64, -x86, -arm, -armel, -arm64"
+    echo "BuildArch can be: -x64, -x86, -arm, -armel, -arm64, -ppc64le"
     echo "BuildType can be: -debug, -checked, -release"
     echo "-coverage - optional argument to enable code coverage build (currently supported only for Linux and OSX)."
     echo "-ninja - target ninja instead of GNU make"
@@ -109,7 +109,7 @@ check_prereqs()
 
 
     # Minimum required version of clang is version 4.0 for arm/armel cross build
-    if [[ $__CrossBuild == 1 && $__GccBuild == 0 &&  ("$__BuildArch" == "arm" || "$__BuildArch" == "armel") ]]; then
+    if [[ $__CrossBuild == 1 && $__GccBuild == 0 &&  ("$__BuildArch" == "arm" || "$__BuildArch" == "armel" || "$__BuildArch" == "ppc64le") ]]; then
         if ! [[ "$__ClangMajorVersion" -ge "4" ]]; then
             echo "Please install clang4.0 or latest for arm/armel cross build"; exit 1;
         fi
@@ -311,7 +311,7 @@ build_cross_architecture_components()
 
     __SkipCrossArchBuild=1
     # check supported cross-architecture components host(__HostArch)/target(__BuildArch) pair
-    if [[ ("$__BuildArch" == "arm" || "$__BuildArch" == "armel") && ("$__CrossArch" == "x86" || "$__CrossArch" == "x64") ]]; then
+    if [[ ("$__BuildArch" == "arm" || "$__BuildArch" == "armel" || "$__BuildArch" == "ppc64le" ) && ("$__CrossArch" == "x86" || "$__CrossArch" == "x64" "$__CrossArch" == "ppc64le") ]]; then
         __SkipCrossArchBuild=0
     elif [[ "$__BuildArch" == "arm64" && "$__CrossArch" == "x64" ]]; then
         __SkipCrossArchBuild=0
@@ -342,8 +342,8 @@ isMSBuildOnNETCoreSupported()
         return
     fi
 
-    if [ "$__HostArch" == "x64" ]; then
-        if [ "$__HostOS" == "Linux" ]; then
+    if [ ("$__HostArch" == "x64" || "$__HostArch" == "ppc64le")]; then
+        if [ "$__HostOS" == "Linux" && "$__HostArch" == "ppc64le" ]; then
             __isMSBuildOnNETCoreSupported=1
             # note: the RIDs below can use globbing patterns
             UNSUPPORTED_RIDS=("ubuntu.17.04-x64")
@@ -563,6 +563,10 @@ case $CPUName in
         __BuildArch=x64
         __HostArch=x64
         ;;
+    ppc64le)
+	__BuildArch=ppc64le
+	__HostArch=ppc64le
+	;;
     *)
         echo "Unknown CPU $CPUName detected, configuring as if for x64"
         __BuildArch=x64
@@ -704,6 +708,10 @@ while :; do
         arm64|-arm64)
             __BuildArch=arm64
             ;;
+
+        ppc64|-ppc64le)
+	    __BuildArch=ppc64le
+	    ;;
 
         debug|-debug)
             __BuildType=Debug

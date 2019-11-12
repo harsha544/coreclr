@@ -78,6 +78,12 @@ for i in "$@" ; do
             __UbuntuRepo="http://ftp.debian.org/debian/"
             __LinuxCodeName=jessie
             ;;
+	ppc64le)
+            __BuildArch=ppc64le
+            __UbuntuArch=ppc64le
+            __UbuntuRepo="http://archive.ubuntu.com/ubuntu/"
+	    __QEMUArch=ppc64le
+            ;;
         x86)
             __BuildArch=x86
             __UbuntuArch=i386
