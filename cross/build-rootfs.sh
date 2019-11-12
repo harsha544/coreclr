@@ -78,11 +78,11 @@ for i in "$@" ; do
             __UbuntuRepo="http://ftp.debian.org/debian/"
             __LinuxCodeName=jessie
             ;;
-	ppc64le)
-            __BuildArch=ppc64le
-            __UbuntuArch=ppc64le
-            __UbuntuRepo="http://archive.ubuntu.com/ubuntu/"
-	    __QEMUArch=ppc64le
+	ppc64el)
+            __BuildArch=ppc64el
+            __UbuntuArch=ppc64el
+            __UbuntuRepo="http://ports.ubuntu.com/ubuntu-ports/"
+	    __QEMUArch=ppc64el
             ;;
         x86)
             __BuildArch=x86
@@ -101,6 +101,9 @@ for i in "$@" ; do
         lldb4.0)
             __LLDB_Package="liblldb-4.0-dev"
             ;;
+	lldb7.0)
+	    __LLDB_Package="liblldb-7-dev"
+	    ;;
         no-lldb)
             unset __LLDB_Package
             ;;
