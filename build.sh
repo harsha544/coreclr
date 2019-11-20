@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -x
 
 # Work around Jenkins CI + msbuild problem: Jenkins sometimes creates very large environment
 # variables, and msbuild can't handle environment blocks with such large variables. So clear
@@ -342,8 +343,8 @@ isMSBuildOnNETCoreSupported()
         return
     fi
 
-    if [[ ("$__HostArch" == "x64" || "$__HostArch" == "ppc64el") ]]; then
-	    if [[ ("$__HostOS" == "Linux" && "$__HostArch" == "ppc64el") ]]; then
+    if [[ ("$__HostArch" == "x64") ]]; then
+	    if [[ ("$__HostOS" == "Linux") ]]; then
             __isMSBuildOnNETCoreSupported=1
             # note: the RIDs below can use globbing patterns
             UNSUPPORTED_RIDS=("ubuntu.17.04-x64")
@@ -564,6 +565,7 @@ case $CPUName in
         __HostArch=x64
         ;;
     ppc64el)
+	echo "Unsupported CPU $CPUName detected, build might not succeed!! Try Cross Compile"
 	__BuildArch=ppc64el
 	__HostArch=ppc64el
 	;;
@@ -709,7 +711,7 @@ while :; do
             __BuildArch=arm64
             ;;
 
-        ppc64|-ppc64el)
+        ppc64el|-ppc64el)
 	    _BuildArch=ppc64el
 	    ;;
 
@@ -788,6 +790,12 @@ while :; do
         clang7|-clang7)
             __ClangMajorVersion=7
             __ClangMinorVersion=
+            ;;
+
+        gcc4.8|-gcc4.8)
+            __GccMajorVersion=4
+            __GccMinorVersion=8
+            __GccBuild=1
             ;;
 
         gcc5|-gcc5)
@@ -997,7 +1005,7 @@ fi
 
 # Set default clang version
 if [[ $__ClangMajorVersion == 0 && $__ClangMinorVersion == 0 ]]; then
-    if [[ "$__BuildArch" == "arm" || "$__BuildArch" == "armel" ]]; then
+    if [[ "$__BuildArch" == "ppc64el" || "$__BuildArch" == "armel" || "$__BuildArch" == "arm" ]]; then
         __ClangMajorVersion=5
         __ClangMinorVersion=0
     else

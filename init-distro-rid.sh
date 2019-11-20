@@ -119,7 +119,7 @@ initDistroRidGlobal()
     # portable and non-portable rids and will be used in build-packages.sh
 
     local buildOs=$1
-    local buildArch=$2
+    local buildArch=ppc64el
     local isPortable=$3
     local rootfsDir=$4
 

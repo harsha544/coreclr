@@ -13,8 +13,8 @@ usage()
 __LinuxCodeName=trusty
 __CrossDir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 __InitialDir=$PWD
-__BuildArch=arm
-__UbuntuArch=armhf
+__BuildArch=ppc64el
+__UbuntuArch=ppc64el
 __UbuntuRepo="http://ports.ubuntu.com/"
 __LLDB_Package="lldb-3.6-dev"
 __SkipUnmount=0
