@@ -13,8 +13,8 @@ usage()
 __LinuxCodeName=xenial
 __CrossDir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 __InitialDir=$PWD
-__BuildArch=arm
-__UbuntuArch=armhf
+__BuildArch=ppc64el
+__UbuntuArch=ppc64el
 __UbuntuRepo="http://ports.ubuntu.com/"
 __LLDB_Package="liblldb-3.9-dev"
 __SkipUnmount=0
@@ -82,9 +82,15 @@ while :; do
             __UbuntuRepo="http://ftp.debian.org/debian/"
             __LinuxCodeName=jessie
             ;;
+        ppc64el)
+            __BuildArch=ppc64el
+            __UbuntuArch=ppc64el
+            __UbuntuRepo="http://ports.ubuntu.com/ubuntu-ports/"
+            __QEMUArch=ppc64el
+	    ;;
         x86)
-            __BuildArch=x86
-            __UbuntuArch=i386
+            __BuildArch=ppc64el
+            __UbuntuArch=ppc64el
             __UbuntuRepo="http://archive.ubuntu.com/ubuntu/"
             ;;
         lldb3.6)
@@ -104,6 +110,9 @@ while :; do
             ;;
         lldb6.0)
             __LLDB_Package="liblldb-6.0-dev"
+            ;;
+        lldb7.0)
+            __LLDB_Package="liblldb-7-dev"
             ;;
         no-lldb)
             unset __LLDB_Package

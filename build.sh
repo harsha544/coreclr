@@ -26,7 +26,7 @@ export PYTHON
 usage()
 {
     echo "Usage: $0 [BuildArch] [BuildType] [-verbose] [-coverage] [-cross] [-gccx.y] [-clangx.y] [-ninja] [-configureonly] [-skipconfigure] [-skipnative] [-skipcrossarchnative] [-skipmanaged] [-skipmscorlib] [-stripsymbols] [-ignorewarnings] [-cmakeargs] [-bindir]"
-    echo "BuildArch can be: -x64, -x86, -arm, -armel, -arm64"
+    echo "BuildArch can be: -x64, -x86, -arm, -armel, -arm64, -ppc64el"
     echo "BuildType can be: -debug, -checked, -release"
     echo "-coverage - optional argument to enable code coverage build (currently supported only for Linux and OSX)."
     echo "-ninja - target ninja instead of GNU make"
@@ -115,9 +115,9 @@ check_prereqs()
     fi
 
     # Minimum required version of clang is version 4.0 for arm/armel cross build
-    if [[ $__CrossBuild == 1 && $__GccBuild == 0 &&  ("$__BuildArch" == "arm" || "$__BuildArch" == "armel") ]]; then
+    if [[ $__CrossBuild == 1 && $__GccBuild == 0 &&  ("$__BuildArch" == "arm" || "$__BuildArch" == "armel" || "$__BuildArch" == "ppc64el") ]]; then
         if ! [[ "$__ClangMajorVersion" -ge "4" ]]; then
-            echo "Please install clang4.0 or latest for arm/armel cross build"; exit 1;
+            echo "Please install clang4.0 or latest for arm/armel/ppc64el cross build"; exit 1;
         fi
     fi
 
@@ -335,6 +335,7 @@ build_cross_architecture_components()
     elif [[ "$__BuildArch" == "arm64" && "$__CrossArch" == "x64" ]]; then
         __SkipCrossArchBuild=0
     else
+	 echo "######## Won't Support #########"
         # not supported
         return
     fi
@@ -513,6 +514,8 @@ build_CoreLib()
            build_CoreLib_ni "$__CrossComponentBinDir/crossgen" $__CoreLibILDir
        elif [[ ( "$__HostArch" == "x64" ) && ( "$__BuildArch" == "arm64" ) ]]; then
            build_CoreLib_ni "$__CrossComponentBinDir/crossgen" $__CoreLibILDir
+       elif [[ ( "$__HostArch" == "x64" ) && ( "$__BuildArch" == "ppc64el" ) ]]; then
+	   build_CoreLib_ni "$__CrossComponentBinDir/crossgen" $__CoreLibILDir
        else
            # Crossgen not performed, so treat the IL version as the final version
            cp $__CoreLibILDir/System.Private.CoreLib.dll $__BinDir/System.Private.CoreLib.dll
@@ -588,7 +591,7 @@ case $CPUName in
         ;;
 
     x86_64)
-        __BuildArch=x64
+        __BuildArch=ppc64el
         __HostArch=x64
         ;;
 
@@ -607,6 +610,10 @@ case $CPUName in
         __BuildArch=x64
         __HostArch=x64
         ;;
+    ppc64el)
+	__BuildArch=ppc64el
+	__HostArch=ppc64el
+	;;
     *)
         echo "Unknown CPU $CPUName detected, configuring as if for x64"
         __BuildArch=x64
@@ -745,8 +752,12 @@ while :; do
         arm64|-arm64)
             __BuildArch=arm64
             ;;
-
-        debug|-debug)
+	
+    	ppc64el|-ppc64el)
+	    __BuildArch=ppc64el
+	    ;;
+        
+    	debug|-debug)
             __BuildType=Debug
             ;;
 
