@@ -4,7 +4,7 @@ function(clr_unknown_arch)
     elseif(CLR_CROSS_COMPONENTS_BUILD)
         message(FATAL_ERROR "Only AMD64, I386 host are supported for linux cross-architecture component")
     else()
-        message(FATAL_ERROR "Only AMD64, ARM64 and ARM are supported")
+	    message(FATAL_ERROR "Only AMD64, ARM64, PPC64EL and ARM are supported")
     endif()
 endfunction()
 

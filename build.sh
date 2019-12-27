@@ -330,10 +330,12 @@ build_cross_architecture_components()
 
     __SkipCrossArchBuild=1
     # check supported cross-architecture components host(__HostArch)/target(__BuildArch) pair
-    if [[ ("$__BuildArch" == "arm" || "$__BuildArch" == "armel") && ("$__CrossArch" == "x86" || "$__CrossArch" == "x64") ]]; then
+    if [[ ("$__BuildArch" == "arm" || "$__BuildArch" == "armel" || "$__BuildArch" == "ppc64el") && ("$__CrossArch" == "x86" || "$__CrossArch" == "x64") ]]; then
         __SkipCrossArchBuild=0
+	echo "Inside IF Condition"
     elif [[ "$__BuildArch" == "arm64" && "$__CrossArch" == "x64" ]]; then
         __SkipCrossArchBuild=0
+	echo "Inside ELSEIF Condition"
     else
 	 echo "######## Won't Support #########"
         # not supported
@@ -503,6 +505,8 @@ build_CoreLib()
        elif [[ ( "$__HostArch" == "x64" ) && ( "$__BuildArch" == "x86" ) ]]; then
            build_CoreLib_ni "$__BinDir/crossgen" $__CoreLibILDir
        elif [[ ( "$__HostArch" == "arm64" ) && ( "$__BuildArch" == "arm" ) ]]; then
+           build_CoreLib_ni "$__BinDir/crossgen" $__CoreLibILDir
+       elif [[ ( "$__HostArch" == "x64" ) && ( "$__BuildArch" == "ppc64el" ) ]]; then
            build_CoreLib_ni "$__BinDir/crossgen" $__CoreLibILDir
        else
            exit 1
