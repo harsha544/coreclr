@@ -563,7 +563,7 @@ echo "Commencing CoreCLR Repo build"
 
 # Argument types supported by this script:
 #
-# Build architecture - valid values are: x64, ARM.
+# Build architecture - valid values are: x64, ARM, PPC64EL
 # Build Type         - valid values are: Debug, Checked, Release
 #
 # Set the default arguments for build
@@ -595,7 +595,7 @@ case $CPUName in
         ;;
 
     x86_64)
-        __BuildArch=ppc64el
+        __BuildArch=x64
         __HostArch=x64
         ;;
 
@@ -615,7 +615,7 @@ case $CPUName in
         __HostArch=x64
         ;;
     ppc64el)
-	__BuildArch=ppc64el
+	__BuildArch=x64
 	__HostArch=ppc64el
 	;;
     *)
